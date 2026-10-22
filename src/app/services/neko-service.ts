@@ -11,6 +11,10 @@ export class NekoService {
 
     constructor(private http: HttpClient) { }
 
+    getNeko(name:string, type:number):Observable<any>{
+        return this.http.get(`${this.apiUrl}/search?query=${name}&type=${type}`);
+    }
+
 
 }
 
