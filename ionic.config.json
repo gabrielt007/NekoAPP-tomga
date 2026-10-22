@@ -1,0 +1,7 @@
+{
+  "name": "NekoAPP-tomga",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
