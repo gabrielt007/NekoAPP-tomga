@@ -7,17 +7,21 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-    <ion-list>
-    @for (item of items; track item; let index = $index) {
-    <ion-item>
-      <ion-avatar slot="start">
-        <img [src]="'https://picsum.photos/80/80?random=' + index" alt="avatar" />
-      </ion-avatar>
-      <ion-label>{{ item }}</ion-label>
-    </ion-item>
+  <ion-list>
+    @for (neko of nekos; track neko.url) {
+      <ion-item>
+        <ion-avatar slot="start">
+          <img [src]="neko.url" alt="Neko Image" />
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ neko.artist_name }}</h2>
+          <p><a [href]="nekos.source_url" target="_blank">Ver fuente</a></p>
+        </ion-label>
+      </ion-item>
     }
   </ion-list>
+
   <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
-    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más nekos..."></ion-infinite-scroll-content>
   </ion-infinite-scroll>
-</ion-content>
+</ion-content> 

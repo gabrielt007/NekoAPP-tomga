@@ -2,7 +2,11 @@ import { Component, OnInit} from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonList,
   InfiniteScrollCustomEvent, IonAvatar, IonInfiniteScroll, IonInfiniteScrollContent, 
 } from '@ionic/angular';
+
+import { NekoService, NekoItem } from '../services/neko-service';
+
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-tab2',
@@ -12,26 +16,34 @@ import { ExploreContainerComponent } from '../explore-container/explore-containe
     IonAvatar, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonLabel, IonList
   ]
 })
-export class Tab2Page {
-  items: string[] = [];
-  constructor() {}
+export class Tab2Page implements OnInit{
+  nekos: NekoItem[] = [];
+  constructor(private nekoService: NekoService) {}
 
   ngOnInit() {
-    this.generateItems();
+    this.loadNekos();
   }
 
-  private generateItems() {
-    const count = this.items.length + 1;
-    for (let i = 0; i < 50; i++) {
-      this.items.push(`Item ${count + i}`);
-    }
+  loadNekos(event?: InfiniteScrollCustomEvent){
+    this.nekoService.getNekos().subscribe({
+      next: (response) => {
+        this.nekos.push(...response.results);
+        if(event){
+          event.target.complete();
+        }
+      },
+      error: (err) => {
+        console.error("Existe un error en el consumo de la Api:", err);
+        if(event){
+          event.target.complete();
+        }
+      }
+    });
   }
+
 
   onIonInfinite(event: InfiniteScrollCustomEvent) {
-    this.generateItems();
-    setTimeout(() => {
-      event.target.complete();
-    }, 500);
+    this.loadNekos(event);
   }
- 
+
 }
