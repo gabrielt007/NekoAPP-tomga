@@ -11,8 +11,16 @@ import { NgIf } from '@angular/common';
 })
 export class Tab1Page {
 
-  errorMessage = '';
+  errorMsg = signal<string | null>(null);
 
   constructor() {}
+
+  async obtenerImagen() {
+    try {
+      const nekoImg = await this.getNeko()
+    } catch (e: any) {
+      this.errorMsg.set(e?.message ?? 'Error al obtener la ubicación actual');
+    }
+  }
 
 }
