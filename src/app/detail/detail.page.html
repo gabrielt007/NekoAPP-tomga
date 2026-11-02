@@ -1,0 +1,57 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle del Neko</ion-title>
+    
+    @if (neko) {
+      <ion-buttons slot="end">
+        <ion-button (click)="toggleFavorito()" color="danger">
+          <ion-icon 
+            slot="icon-only" 
+            [name]="esFavorito(neko.url) ? 'heart' : 'heart-outline'">
+          </ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  @if (errorMsg) {
+    <div class="estado-centrado">
+      <ion-text color="danger">
+        <p>{{ errorMsg }}</p>
+      </ion-text>
+      <ion-button fill="outline" (click)="volver()">
+        <ion-icon slot="start" name="arrow-back"></ion-icon>
+        Volver al listado
+      </ion-button>
+    </div>
+  }
+
+  @if (neko && !errorMsg) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>{{ neko.artist_name }}</ion-card-subtitle>
+        <ion-card-title>Neko</ion-card-title>
+      </ion-card-header>
+
+      <ion-img [src]="neko.url" alt="Neko Image" style="width: 100%; height: auto; object-fit: cover;"></ion-img>
+
+      <ion-card-content>
+        <p>
+          <strong>Fuente:</strong>
+          <a [href]="neko.source_url" target="_blank" rel="noopener">Ver original</a>
+        </p>
+        <p>
+          <strong>Artista:</strong>
+          <a [href]="neko.artist_href" target="_blank" rel="noopener">{{ neko.artist_name }}</a>
+        </p>
+      </ion-card-content>
+    </ion-card>
+  }
+
+</ion-content>

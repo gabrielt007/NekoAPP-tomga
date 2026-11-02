@@ -1,27 +1,78 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Infinite-scroll
-    </ion-title>
+    <ion-title>Infinite-scroll</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list>
-    @for (neko of nekos; track neko.url) {
-      <ion-item>
-        <ion-avatar slot="start">
-          <img [src]="neko.url" alt="Neko Image" />
-        </ion-avatar>
-        <ion-label>
-          <h2>{{ neko.artist_name }}</h2>
-          <p><a [href]="nekos.source_url" target="_blank">Ver fuente</a></p>
-        </ion-label>
-      </ion-item>
-    }
-  </ion-list>
 
-  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
-    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más nekos..."></ion-infinite-scroll-content>
+  @if (loading) {
+    @if (nekos.length === 0) {
+      <div class="estado-centrado">
+        <ion-spinner name="bubbles"></ion-spinner>
+        <p>Cargando nekos...</p>
+      </div>
+    }
+  }
+
+  @if (errorMsg) {
+    @if (nekos.length === 0) {
+      <div class="estado-centrado">
+        <ion-text color="danger">
+          <p>{{ errorMsg }}</p>
+        </ion-text>
+        <ion-button fill="outline" (click)="reintentar()">
+          <ion-icon slot="start" name="refresh"></ion-icon>
+          Reintentar
+        </ion-button>
+      </div>
+    }
+  }
+
+  @if (nekos.length > 0) {
+    <ion-list>
+      @for (neko of nekos; track neko.url) {
+        <ion-item 
+          button 
+          [routerLink]="['/tabs/detail', 'view']"
+          [state]="{ neko: neko }">
+          
+          <ion-avatar slot="start">
+            <img [src]="neko.url" alt="Neko Image" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ neko.artist_name }}</h2>
+            <p>
+              <a [href]="neko.source_url" target="_blank" rel="noopener" (click)="$event.stopPropagation()">
+                Ver fuente
+              </a>
+            </p>
+          </ion-label>
+
+          <!-- Botón de Favorito -->
+          <ion-button 
+            slot="end" 
+            fill="clear" 
+            color="danger"
+            (click)="toggleFavorito(neko, $event)">
+            <ion-icon 
+              slot="icon-only" 
+              [name]="esFavorito(neko.url) ? 'heart' : 'heart-outline'">
+            </ion-icon>
+          </ion-button>
+
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <ion-infinite-scroll
+    (ionInfinite)="onIonInfinite($event)"
+    [disabled]="!hasMore">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Cargando más nekos...">
+    </ion-infinite-scroll-content>
   </ion-infinite-scroll>
-</ion-content> 
+
+</ion-content>

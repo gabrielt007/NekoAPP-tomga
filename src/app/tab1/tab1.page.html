@@ -1,25 +1,89 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Listado remoto
-    </ion-title>
+    <ion-title>Buscar nekos</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  
-  <ion-card color="light">
-    <ion-card-header>
-      <ion-card-title>Neko Card</ion-card-title>
-      <ion-card-subtitle>Tarjetas con información</ion-card-subtitle>
-    </ion-card-header>
+<ion-content [fullscreen]="true" class="ion-padding">
 
-    <ion-card-content>
-      <img alt="NekoImage" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-      <p>Here's a small text description for the card content. Nothing more, nothing less.</p>
-    </ion-card-content>
+  <ion-searchbar
+    [value]="query"
+    placeholder="Buscar por nombre o artista..."
+    debounce="0"
+    (ionInput)="onSearchChange($event)">
+  </ion-searchbar>
 
-    <ion-button fill="clear" click="getNekoStatic()">Image</ion-button>
-    <ion-button fill="clear">Gift</ion-button>
-  </ion-card>
+  <!-- Filtro por tipo -->
+  <ion-segment
+    [value]="tipo"
+    (ionChange)="onTipoChange($event)">
+    <ion-segment-button value="neko">
+      <ion-label>Neko</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="husbando">
+      <ion-label>Husbando</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="kitsune">
+      <ion-label>Kitsune</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="waifu">
+      <ion-label>Waifu</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  @if (loading) {
+    <div class="estado-centrado">
+      <ion-spinner name="bubbles"></ion-spinner>
+      <p>Buscando...</p>
+    </div>
+  }
+
+  @if (errorMsg && !loading) {
+    <div class="estado-centrado">
+      <ion-text color="danger">
+        <p>{{ errorMsg }}</p>
+      </ion-text>
+      <ion-button fill="outline" (click)="reintentar()">
+        <ion-icon slot="start" name="refresh"></ion-icon>
+        Reintentar
+      </ion-button>
+    </div>
+  }
+
+  @if (!busquedaRealizada && !loading && !errorMsg) {
+    <div class="estado-centrado">
+      <ion-text color="medium">
+        <p>Escribe algo para buscar nekos.</p>
+      </ion-text>
+    </div>
+  }
+
+  @if (busquedaRealizada && !loading && !errorMsg && resultados.length === 0) {
+    <div class="estado-centrado">
+      <ion-text color="medium">
+        <p>No se encontraron resultados para "{{ query }}".</p>
+      </ion-text>
+    </div>
+  }
+
+  @if (resultados.length > 0 && !loading) {
+    <ion-list>
+      @for (neko of resultados; track neko.url) {
+        <ion-item>
+          <ion-avatar slot="start">
+            <img [src]="neko.url" alt="Neko Image" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ neko.artist_name }}</h2>
+            <p>
+              <a [href]="neko.source_url" target="_blank" rel="noopener">
+                Ver fuente
+              </a>
+            </p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
 </ion-content>
